@@ -3,6 +3,7 @@ import feedparser
 import pandas as pd
 pd.set_option('max_colwidth', 400)
 import re
+import datetime
 
 
 # %%
@@ -35,11 +36,15 @@ class NewsScraper():
         with open('rss_summary.html', 'w') as f:
             f.write('<link rel="stylesheet" type="text/css" href="style.css">')
             f.write(self.db.to_html())
+    
+    def save_data(self):
+        self.db.to_csv("{}.csv".format(datetime.datetime.today().strftime('%Y_%m_%d')))
 
 # %%
 ns = NewsScraper()
 ns.get_headlines()
-ns.present_data()
+#ns.present_data()
+ns.save_data()
 
 # %%
 

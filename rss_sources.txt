@@ -1,6 +1,6 @@
-#https://www.dr.dk/nyheder/service/feeds/allenyheder#
-#http://feeds.tv2.dk/nyheder/rss
-#https://www.bt.dk/nyheder/seneste/rss
-#https://ekstrabladet.dk/rssfeed/all/
-#https://www.information.dk/feed
+https://www.dr.dk/nyheder/service/feeds/allenyheder#
+http://feeds.tv2.dk/nyheder/rss
+https://www.bt.dk/nyheder/seneste/rss
+https://ekstrabladet.dk/rssfeed/all/
+https://www.information.dk/feed
 https://ing.dk/rss/nyheder
