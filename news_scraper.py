@@ -5,7 +5,6 @@ pd.set_option('max_colwidth', 400)
 import re
 import datetime
 
-
 # %%
 
 class NewsScraper():
@@ -38,16 +37,16 @@ class NewsScraper():
             f.write(self.db.to_html())
     
     def save_data(self):
-        self.db.to_csv("{}.csv".format(datetime.datetime.today().strftime('%Y_%m_%d')))
+        self.db.to_pickle("./rss_data/{}.pickle".format(datetime.datetime.today().strftime('%Y_%m_%d')))
 
 # %%
 ns = NewsScraper()
 ns.get_headlines()
-#ns.present_data()
 ns.save_data()
+#ns.present_data()
 
 # %%
-
+#df = pd.read_pickle('./rss_data/2018_01_02.pickle')
 
 
 
