@@ -123,5 +123,15 @@ def test_sample(model, sample):
     prob = model.predict_proba(sample_tfidf)[0]
     print("Sample estimated as %s: negative prob %f, positive prob %f" % (result.upper(), prob[0], prob[1]))
 
+def get_sentiment(sample):
+    model = logreg
+    sample_counts = count_vect.transform([sample])
+    sample_tfidf = tfidf_transformer.transform(sample_counts)
+    result = model.predict(sample_tfidf)[0]
+    prob = model.predict_proba(sample_tfidf)[0]
+    
+    return result.upper()
+#    return prob
+
 test_sample(logreg, 'The food was delicious, it smelled great and the taste was awesome')
-test_sample(logreg, 'This place is terrible! Everything tasted disgusting...')
+get_sentiment('This place is terrible! Everything tasted disgusting...')

@@ -6,7 +6,14 @@
 import pandas as pd
 from os import listdir
 pd.set_option('max_colwidth', 400)
+from textblob import TextBlob
+from sqlalchemy import create_engine
+import pymysql
 
+username = 'sensor'
+password = 'aabbccdd'
+hostname = '0ohm.dk'
+db_name = 'nlp'
 
 class DataProcessor():
     '''Universal data processor for language data'''
@@ -14,11 +21,37 @@ class DataProcessor():
     def __init__(self):
         pass
 
+    def process_twitter(self, source):
+        self.df = pd.read_pickle(source)
+        target_temp = pd.read_pickle('twitter_db.pickle')
+        
+        self.df['hashtags'] = ([[tag['text'] for tag in ent['hashtags']] for ent in self.df['entities']])
+#        self.df = self.df.drop(['entities'], axis=1)
+        
+        self.df['polarity'] = [TextBlob(tweet).sentiment[0] for tweet in self.df['text']]
+        self.df['subjectivity'] = [TextBlob(tweet).sentiment[1] for tweet in self.df['text']]
+       
+        self.df = self.df
+        
+        return self.df
+
+    def send_to_sql(self, table_name):
+        '''Converts internal dataframe to strings and uploads to sql database'''
+        engine = create_engine(f'mysql+pymysql://{username}:{password}@{hostname}/{db_name}', encoding='utf-8')
+        dfs = self.df.applymap(lambda x: str(x).encode('utf-8','ignore'))
+        dfs.to_sql(table_name, engine, if_exists='append')
+        
+    def get_sql(self, table_name):
+        engine = create_engine(f'mysql+pymysql://{username}:{password}@{hostname}/{db_name}', encoding='utf-8')
+        query = f'select * from {table_name}'
+        df = pd.read_sql(query, engine, index_col = 'index')
+        return df
+
     def append_to_database(self, source, target):
         '''Adds data from source pickle to target pickle. Does processing: Remove duplicates'''
-        source_temp = pd.read_pickle(source)
+        self.df = pd.read_pickle(source)
         target_temp = pd.read_pickle(target)
-        tdf = target_temp.append(source_temp)
+        tdf = target_temp.append(self.df)
         tdf['compare'] = tdf['clean tokens'].apply(lambda x: ' '.join(x))
         tdf = tdf.drop_duplicates(['compare'])
 
@@ -32,8 +65,8 @@ class DataProcessor():
         target_temp = pd.read_pickle(target)
 
         for source in files:
-            source_temp = pd.read_pickle(source_dir + source)
-            target_temp = target_temp.append(source_temp)
+            self.df = pd.read_pickle(source_dir + source)
+            target_temp = target_temp.append(self.df)
 
         tdf = target_temp
         tdf['tag'] = tdf['Source'].apply(self.get_tag)
@@ -63,9 +96,13 @@ if __name__ == '__main__':
     dp = DataProcessor()
 
     # Append temporary file to database
-    temp_df = dp.append_to_database('twitter_temp.pickle', 'twitter_db.pickle')
+    df = dp.process_twitter('twitter_temp.pickle')
+#    temp_df = dp.append_to_database('twitter_temp.pickle', 'twitter_db.pickle')
 
     # Append news
-    temp_df = dp.news_append('rss_data/', 'news_db.pickle')
-
+#    temp_df = dp.news_append('rss_data/', 'news_db.pickle')
+    dp.send_to_sql('twitter')
+    
+#%%
+df = dp.get_sql('twitter')
 # %% End of file

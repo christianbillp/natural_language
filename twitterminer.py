@@ -73,7 +73,7 @@ if __name__ == '__main__':
     '''Tests connection to twitter, extract tweets and drops data pickle'''
 
     # Load authentication details from configuration file
-    with open('twitter_conf.txt', 'r') as f:
+    with open('twitter.conf', 'r') as f:
         consumer_key, consumer_secret, access_token, access_secret = f.read().split(',')
 
     # Establish connection to Twitter
