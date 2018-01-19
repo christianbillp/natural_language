@@ -10,6 +10,7 @@ rss_data/
 twitter_conf.txt
 temp.py
 *_temp.pickle
+*.conf
 
 # C extensions
 *.so
