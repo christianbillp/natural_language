@@ -53,10 +53,10 @@ print("%d items in training data, %d in test data" % (len(train), len(test)))
 # note: Names "Summary_Clean" and "Sentiment" may need to be changed
 
 tfidf_transformer = TfidfTransformer()
-X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
 
 count_vect = CountVectorizer(min_df = 1, ngram_range = (1, 4))
 X_train_counts = count_vect.fit_transform(train["Summary_Clean"])
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
 X_new_counts = count_vect.transform(test["Summary_Clean"])
 
 X_test_tfidf = tfidf_transformer.transform(X_new_counts)
@@ -92,17 +92,17 @@ vfunc = np.vectorize(formatt)
 #cmp = 0    # Related to plotting
 colors = ['b', 'g', 'y', 'm', 'k']
 results = {}
-
+cmp = 0
 # Check accuracy for each learning method
 for model, predicted in prediction.items():
     false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test.map(formatt), vfunc(predicted))
     roc_auc = auc(false_positive_rate, true_positive_rate)
     results[model] = roc_auc
 
-print(results)
+#print(results)
 
     # Uncomment for plot
-'''
+
     plt.plot(false_positive_rate, true_positive_rate, colors[cmp], label='%s: AUC %0.2f'% (model,roc_auc))
     cmp += 1
 
@@ -114,7 +114,7 @@ plt.ylim([-0.1,1.2])
 plt.ylabel('True Positive Rate')
 plt.xlabel('False Positive Rate')
 plt.show()
-''';
+
 #%%
 def test_sample(model, sample):
     sample_counts = count_vect.transform([sample])
@@ -124,3 +124,4 @@ def test_sample(model, sample):
     print("Sample estimated as %s: negative prob %f, positive prob %f" % (result.upper(), prob[0], prob[1]))
 
 test_sample(logreg, 'The food was delicious, it smelled great and the taste was awesome')
+test_sample(logreg, 'This place is terrible! Everything tasted disgusting...')

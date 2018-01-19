@@ -36,6 +36,7 @@ query = '''A group of misfits enter a Las Vegas dodgeball tournament in order
 to save their cherished local gym from the onslaught of a corporate health 
 fitness chain.
 '''
+
 # %% Setup vectorizer to unigram vector representation
 #    Vectorize query - (Optional: shape and feature names)
 vectorizer = TfidfVectorizer(stop_words='english',

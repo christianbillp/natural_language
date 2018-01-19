@@ -67,3 +67,18 @@ na.generate_tokens()
 print(na.show_frequent_words(20, 'bt'))
 
 # %% End of file
+
+#%%
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.rcParams['figure.dpi']= 300
+
+fig = plt.figure(figsize=(8,8))
+ax1 = plt.subplot(211)
+plt.subplots_adjust(hspace=0.4)  
+ta.show_sentiment('trump')
+
+ax2 = plt.subplot(212)
+ta.show_sentiment('hillary')
+
+
