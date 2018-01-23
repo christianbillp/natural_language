@@ -10,6 +10,7 @@ import datetime
 from tweepy import OAuthHandler
 from textblob import TextBlob
 from sqlalchemy import create_engine
+from pymongo import MongoClient
 
 pd.set_option('max_colwidth', 400)
 
@@ -64,7 +65,17 @@ class TwitterMiner():
         engine = create_engine(f'mysql+pymysql://{self.username}:{self.password}@{self.hostname}/{self.db_name}', encoding='utf-8')
         dfs = self.df.applymap(lambda x: str(x).encode('utf-8','ignore'))
         dfs.to_sql(table_name, engine, if_exists='append')
-
+        
+    def mine_and_send(self, tag, n_items):
+        '''Mines [n_items] tweets with [tag]'''
+        tweets = [status for status in tweepy.Cursor(self.api.search, q=tag).items(n_items)]
+    
+        with MongoClient('localhost', 27017) as client:
+            posts = client['nlp']['twitter']
+            
+            [posts.insert_one(item._json).inserted_id for item in [tweet for tweet in tweets]]
+        
+    
     def drop_pickle(self, filename):
         '''Saves data as pickle'''
         self.df.to_pickle(filename)
@@ -82,10 +93,13 @@ if __name__ == '__main__':
 
     # Get tweets
 #    df = tm.get_tagged(n=30, tag='Trump')
-    df = tm.test(tag='#trump', n=100)
+#    df = tm.test(tag='#trump', n=100)
 
     # Save data as pickle
-    tm.send_to_sql('twitter')
+#    tm.send_to_sql('twitter')
 #    tm.drop_pickle('twitter_temp.pickle')
+    
+    tm.mine_and_send('#trump', 100)
+
     
 # %% End of file
