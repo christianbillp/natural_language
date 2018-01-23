@@ -9,6 +9,7 @@ import pandas as pd
 import datetime
 from tweepy import OAuthHandler
 from textblob import TextBlob
+from sqlalchemy import create_engine
 
 pd.set_option('max_colwidth', 400)
 

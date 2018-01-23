@@ -103,6 +103,4 @@ if __name__ == '__main__':
 #    temp_df = dp.news_append('rss_data/', 'news_db.pickle')
     dp.send_to_sql('twitter')
     
-#%%
-df = dp.get_sql('twitter')
 # %% End of file
